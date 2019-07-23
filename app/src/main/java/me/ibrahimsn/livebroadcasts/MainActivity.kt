@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        LiveBroadcasts.init().subscribe(this).observe(this, Observer {
+        LiveBroadcasts.init().subscribe(this, arrayOf(Intent.ACTION_TIME_TICK)).observe(this, Observer {
             if (it != null)
                 Log.d("MainActivity", it.action)
         })

@@ -33,7 +33,7 @@ class LiveBroadcasts {
         }
     }
 
-    fun subscribe(context: Context): LiveBroadcast {
-        return LiveBroadcast(receiver, context, publisher)
+    fun subscribe(context: Context, filters: Array<String>): LiveBroadcast {
+        return LiveBroadcast(receiver, context, publisher, filters)
     }
 }

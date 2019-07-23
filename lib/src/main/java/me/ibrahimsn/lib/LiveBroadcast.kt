@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.net.wifi.WifiManager
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -14,7 +13,8 @@ import io.reactivex.schedulers.Schedulers
 
 class LiveBroadcast(private val receiver: BroadcastReceiver,
                     private val context: Context,
-                    private val updates: Observable<Intent>) : MutableLiveData<Intent>() {
+                    private val updates: Observable<Intent>,
+                    private val filters: Array<String>) : MutableLiveData<Intent>() {
 
     private var disposable: Disposable? = null
 
@@ -37,17 +37,17 @@ class LiveBroadcast(private val receiver: BroadcastReceiver,
             })
 
         context.registerReceiver(receiver, IntentFilter().apply {
-            this.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION)
+            for (filter in filters)
+                this.addAction(filter)
         })
     }
 
     override fun onInactive() {
         super.onInactive()
+        disposable?.dispose()
 
         try {
             context.unregisterReceiver(receiver)
         } catch (e: IllegalArgumentException) {}
-
-        disposable?.dispose()
     }
 }
