@@ -13,15 +13,14 @@ allprojects {
 }
 
 dependencies {
-      implementation 'com.github.ibrahimsn98:android-live-broadcasts:1.0'
+      implementation 'com.github.ibrahimsn98:android-live-broadcasts:1.1'
 }
 ```
 
 ## Usage
 ```kotlin
-LiveBroadcasts.init().subscribe(context, arrayOf(Intent.ACTION_TIME_TICK)).observe(this, Observer {
-	if (it != null)
-		Log.d("MainActivity", it.action)
+LiveBroadcast(this, arrayOf(Intent.ACTION_TIME_TICK)).observe(this, Observer {
+    Log.d("MainActivity", it.action)
 })
 ```
 
@@ -50,6 +49,3 @@ License
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 	© 2018 Git
-
-
-> Follow me on Twitter [@ibrahimsn98](https://twitter.com/ibrahimsn98)

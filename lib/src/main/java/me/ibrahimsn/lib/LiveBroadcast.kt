@@ -4,50 +4,34 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import androidx.lifecycle.MutableLiveData
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.observers.DisposableObserver
-import io.reactivex.schedulers.Schedulers
+import androidx.lifecycle.LiveData
 
-class LiveBroadcast(private val receiver: BroadcastReceiver,
-                    private val context: Context,
-                    private val updates: Observable<Intent>,
-                    private val filters: Array<String>) : MutableLiveData<Intent>() {
+class LiveBroadcast(
+    private val context: Context,
+    private val filters: Array<String>
+) : LiveData<Intent>() {
 
-    private var disposable: Disposable? = null
+    private val intentFilter = IntentFilter().apply {
+        for (filter in filters) addAction(filter)
+    }
 
     override fun onActive() {
         super.onActive()
+        context.registerReceiver(broadcastReceiver, intentFilter)
+    }
 
-        disposable = updates.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread()).subscribeWith(object: DisposableObserver<Intent>() {
-                override fun onComplete() {
-
-                }
-
-                override fun onNext(t: Intent) {
-                    postValue(t)
-                }
-
-                override fun onError(e: Throwable) {
-
-                }
-            })
-
-        context.registerReceiver(receiver, IntentFilter().apply {
-            for (filter in filters)
-                this.addAction(filter)
-        })
+    private val broadcastReceiver = object: BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            postValue(intent)
+        }
     }
 
     override fun onInactive() {
         super.onInactive()
-        disposable?.dispose()
-
         try {
-            context.unregisterReceiver(receiver)
-        } catch (e: IllegalArgumentException) {}
+            context.unregisterReceiver(broadcastReceiver)
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+        }
     }
 }

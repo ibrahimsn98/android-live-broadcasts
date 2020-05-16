@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.Observer
-import me.ibrahimsn.lib.LiveBroadcasts
+import me.ibrahimsn.lib.LiveBroadcast
 
 class SecondActivity : AppCompatActivity() {
 
@@ -13,9 +13,8 @@ class SecondActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
 
-        LiveBroadcasts.init().subscribe(this, arrayOf(Intent.ACTION_TIME_TICK)).observe(this, Observer {
-            if (it != null)
-                Log.d("MainActivity", it.action)
+        LiveBroadcast(this, arrayOf(Intent.ACTION_TIME_TICK)).observe(this, Observer {
+            Log.d("SecondActivity", it.action)
         })
     }
 }
